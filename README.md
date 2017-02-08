@@ -2,6 +2,8 @@
 
 Angular directive for select hours in a week.
 
+[![Build Status](https://travis-ci.org/aol/angular-dayparts.svg?branch=master)](https://travis-ci.org/aol/angular-dayparts)
+
 [Demo on Plunker](https://plnkr.co/edit/4cv36iehAy9xLrS1ijF4?p=preview)
 
 Code based on [this StackOverflow answer](http://stackoverflow.com/questions/23163952/how-do-i-capture-table-td-elements-using-mousedown-dragselect-event)
