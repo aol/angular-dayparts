@@ -71,7 +71,8 @@ angular.module('angular-dayparts', [])
               eveningHours: eveningHours
             }
 
-            function getWeekParts (start, end, days = angular.copy($scope.days)) {
+            function getWeekParts (start, end, days) {
+              days = days || angular.copy($scope.days);
               var hours = _.range(start, end);
               var dayParts = [];
               days.forEach(function (day) {
