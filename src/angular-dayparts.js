@@ -8,6 +8,7 @@ angular.module('angular-dayparts', [])
       {"value":"eveningHours", "label":"Evenings (6pm-12pm)"},
       {"value":"custom", "label":"Custom", disabled: true}
     ];
+    this.selectedPresetItem = this.presetItems[5].value;
     this.selectElementClass = '';
     this.$get = _.constant(this);
   })
@@ -48,7 +49,7 @@ angular.module('angular-dayparts', [])
              * Populate preset <select> element and set initial value
              */
             $scope.presetItems = angularDaypartsConfig.presetItems;
-            $scope.selectedPresetItem = angularDaypartsConfig.presetItems[0].value;
+            $scope.selectedPresetItem = angularDaypartsConfig.selectedPresetItem;
 
             /*
              * Get week parts
