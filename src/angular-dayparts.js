@@ -274,8 +274,6 @@ angular.module('angular-dayparts', [])
                         $(el).addClass(klass);
                     }
                 });
-                $scope.selectedPresetItem = 'custom';
-                onChangeCallback();
             }
 
 
