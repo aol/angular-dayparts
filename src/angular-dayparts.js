@@ -46,10 +46,9 @@ angular.module('angular-dayparts', [])
             $scope.selectElementClass = angularDaypartsConfig.selectElementClass;
 
             /*
-             * Populate preset <select> element and set initial value
+             * Populate preset <select> element
              */
             $scope.presetItems = angularDaypartsConfig.presetItems;
-            $scope.selectedPresetItem = angularDaypartsConfig.selectedPresetItem;
 
             /*
              * Get week parts
@@ -65,48 +64,49 @@ angular.module('angular-dayparts', [])
              * const presets = { week, weekend, weekdays, businessHours, eveningHours }
              */
             var presets = {
-              week: week,
-              weekend: weekend,
-              weekdays: weekdays,
-              businessHours: businessHours,
-              eveningHours: eveningHours
+                week: week,
+                weekend: weekend,
+                weekdays: weekdays,
+                businessHours: businessHours,
+                eveningHours: eveningHours
             }
 
             function getWeekParts (start, end, days) {
-              days = days || angular.copy($scope.days);
-              var hours = _.range(start, end);
-              var dayParts = [];
-              days.forEach(function (day) {
-                hours.forEach(function (hour) {
-                  dayParts.push(day.name + '-' + hour)
+                days = days || angular.copy($scope.days);
+                var hours = _.range(start, end);
+                var dayParts = [];
+                days.forEach(function (day) {
+                    hours.forEach(function (hour) {
+                    dayParts.push(day.name + '-' + hour)
+                    })
                 })
-              })
-              return dayParts;
+                return dayParts;
             }
 
             /*
              * Make grid selections based on selected preset
              */
             function setPreset (weekPart) {
-              $element.find('td').each(function(i, el){
-                if (_.includes(weekPart, $(el).data('time'))) {
-                  $(el).addClass(klass);
-                }
-              });
-              $scope.options.onChange(weekPart);
+                $element.find('td').each(function(i, el){
+                    if (_.includes(weekPart, $(el).data('time'))) {
+                        $(el).addClass(klass);
+                    }
+                });
+                selected = weekPart;
+                onChangeCallback();
             }
 
             /*
              * If the Custom preset option is enabled, wipe the grid
              */
             $scope.selectedPresetItemChanged = function () {
-              if ($scope.selectedPresetItem === 'custom') {
-                deselect();
-                $scope.options.onChange([]);
-              } else {
-                deselect();
-                setPreset(presets[$scope.selectedPresetItem]);
-              }
+                if ($scope.selectedPresetItem === 'custom') {
+                    deselect();
+                    $scope.options.onChange([]);
+                } else {
+                    deselect();
+                    setPreset(presets[$scope.selectedPresetItem]);
+                }
             }
 
             if ($scope.options.selected) {
@@ -133,40 +133,62 @@ angular.module('angular-dayparts', [])
             function onChangeCallback () {
                 if ($scope.options && $scope.options.onChange) {
 
-                    // Sort by day name and time
-                    var sortedSelected = [];
-                    selected.forEach(function(item){
-                        var el = item.split('-');
-                        var o = {day: _.find($scope.days, {name: el[0]}), time: parseInt(el[1])};
-                        sortedSelected.push(o);
-                    });
-
-                    sortedSelected = _.sortBy(_.sortBy(sortedSelected, function(item){
-                        return item.time;
-                    }), function(item){
-                        return item.day.position;
-                    });
-
-                    selected = sortedSelected.map(function(item){
-                        return item.day.name + '-' + item.time;
-                    })
-
-                    if (angular.equals(selected, week)) {
-                      $scope.selectedPresetItem = 'week';
-                    } else if (angular.equals(selected, weekend)) {
-                      $scope.selectedPresetItem = 'weekend';
-                    } else if (angular.equals(selected, weekdays)) {
-                      $scope.selectedPresetItem = 'weekdays';
-                    } else if (angular.equals(selected, businessHours)) {
-                      $scope.selectedPresetItem = 'businessHours';
-                    } else if (angular.equals(selected, eveningHours)) {
-                      $scope.selectedPresetItem = 'eveningHours';
-                    }
-
+                    sortSelected(selected);
+                    setSelectedPresetItem();
                     $scope.options.onChange(selected);
                 }
             }
 
+            /*
+             * Sort selected dayparts
+             */
+            function sortSelected (_selected) {
+
+                // Sort by day name and time
+                var sortedSelected = [];
+                _selected.forEach(function(item){
+                    var el = item.split('-');
+                    var o = {day: _.find($scope.days, {name: el[0]}), time: parseInt(el[1])};
+                    sortedSelected.push(o);
+                });
+
+                sortedSelected = _.sortBy(_.sortBy(sortedSelected, function(item){
+                    return item.time;
+                }), function(item){
+                    return item.day.position;
+                });
+
+                selected = sortedSelected.map(function(item){
+                    return item.day.name + '-' + item.time;
+                })
+            }
+
+            /*
+             * Set selected preset item based on selected dayparts
+             */
+            function setSelectedPresetItem () {
+                if (angular.equals(selected, week)) {
+                    $scope.selectedPresetItem = 'week';
+                } else if (angular.equals(selected, weekend)) {
+                    $scope.selectedPresetItem = 'weekend';
+                } else if (angular.equals(selected, weekdays)) {
+                    $scope.selectedPresetItem = 'weekdays';
+                } else if (angular.equals(selected, businessHours)) {
+                    $scope.selectedPresetItem = 'businessHours';
+                } else if (angular.equals(selected, eveningHours)) {
+                    $scope.selectedPresetItem = 'eveningHours';
+                } else {
+                    $scope.selectedPresetItem = 'custom';
+                }
+            }
+
+            /*
+             * Set selected preset item based on previously saved dayparts
+             */
+            function persistSelectedPresetItem () {
+                sortSelected($scope.options.selected);
+                setSelectedPresetItem();
+            }
 
             /**
              * User start to click
@@ -385,6 +407,7 @@ angular.module('angular-dayparts', [])
                 }
             }
 
+            persistSelectedPresetItem();
 
             /**
              * Mouse events
