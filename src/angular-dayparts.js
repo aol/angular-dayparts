@@ -124,6 +124,7 @@ angular.module('angular-dayparts', [])
                 }
                 isDragging = false;
                 onChangeCallback();
+                onMouseUpCallback();
             }
 
 
@@ -139,7 +140,16 @@ angular.module('angular-dayparts', [])
                 }
             }
 
-            /*
+            /**
+             * Call 'onMouseUp' function from passed options
+             */
+            function onMouseUpCallback () {
+                if ($scope.options && $scope.options.onMouseUp) {
+                    sortSelected(selected);
+                    setSelectedPresetItem();
+                    $scope.options.onMouseUp(selected);
+                }
+            }/*
              * Sort selected dayparts
              */
             function sortSelected (_selected) {
