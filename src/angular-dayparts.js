@@ -199,7 +199,6 @@ angular.module('angular-dayparts', [])
                 isDragging = true;
                 setStartCell(el);
                 setEndCell(el);
-                onChangeCallback();
             }
 
 
